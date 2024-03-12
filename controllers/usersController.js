@@ -162,7 +162,7 @@ module.exports = {
                 const token = jwt.sign({
                     id:myUser.id,email:myUser.email}, keys.secretOrKey,{
                         //expiresIn:(60*60*24) 1 Hora
-                        expiresIn:(60*2) 
+                        //expiresIn:(60*2) 
                     });  // se crea el token
                     const data = {
                         id: myUser.id,

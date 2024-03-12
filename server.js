@@ -22,6 +22,8 @@ const upload = multer({
 })
 
 const users = require('./routes/usersRoutes');
+const categories = require('./routes/categoriesRoutes');
+const products = require('./routes/productsRoutes');
 
 
 const port = process.env.PORT || 3000;
@@ -47,9 +49,13 @@ app.set('port',port);
 
 /**Llamando a las rutas */
 users(app, upload);
+categories(app);
+products(app,upload)
+
+
 
 /// Siempre se debe poner la ip del computador, si cambia en git bash con ip config se puede encontrar la ip actual
-server.listen(3000,'192.168.177.114' || 'localhost', function(){
+server.listen(3000,'192.168.10.16' || 'localhost', function(){
     console.log('Aplicacion de NodeJS ' + port + ' Iniciada..')
 });
 
