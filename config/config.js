@@ -1,3 +1,4 @@
+const env = require('./env.js'); 
 const promise = require('bluebird');
 const options = {
     promiseLib: promise,
@@ -12,11 +13,11 @@ types.setTypeParser(1114,function(stringValue){
 
 // 
 const databaseConfig = {
-    'host':'127.0.0.1',
-    'port': 5432,
-    'database': 'delivery_db',
-    'user': 'postgres',
-    'password': '1234'
+    'host': env.DB_HOST,
+    'port': env.DB_PORT,
+    'database': env.DB_NAME,
+    'user': env.DB_USER,
+    'password': env.DB_PASSWORD
 };
 
 const db = pgp(databaseConfig);

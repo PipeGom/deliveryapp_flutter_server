@@ -1,1 +1,11 @@
 node_modules
+
+serviceAccountKey.json
+
+coverage
+
+.scannerwork
+
+keys.js
+
+sonnar-project.properties

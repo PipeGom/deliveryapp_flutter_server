@@ -9,6 +9,7 @@ const multer = require ('multer');
 const admin = require('firebase-admin');
 const serviceAccount = require('./serviceAccountKey.json');
 const passport = require('passport');
+const env = require('./config/env');
 
 /** Rutas  Inicializar firebase admin*/
 
@@ -18,7 +19,10 @@ admin.initializeApp({
 
 // sirve para recibir el archivo que subiremos a fire base 
 const upload = multer({
-    storage: multer.memoryStorage()
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 8000000 // Compliant: 8MB
+     }
 })
 
 const users = require('./routes/usersRoutes');
@@ -33,7 +37,12 @@ app.use(express.json());
 app.use(express.urlencoded({
     extended:true
 }));
-app.use(cors());
+
+let corsOptions = {
+    origin: 'trustedwebsite.com' // Compliant
+  };
+
+app.use(cors(corsOptions));
 app.use(session({
     secret:"keyboard cat",
     resave: false,
@@ -55,7 +64,7 @@ products(app,upload)
 
 
 /// Siempre se debe poner la ip del computador, si cambia en git bash con ip config se puede encontrar la ip actual
-server.listen(3000,'192.168.10.16' || 'localhost', function(){
+server.listen(3000,env.IP_ADDRESS|| 'localhost', function(){
     console.log('Aplicacion de NodeJS ' + port + ' Iniciada..')
 });
 

@@ -115,7 +115,7 @@ User.findByUserId = (id) => {
 
 User.create = (user)=>{
 
-    const myPasswordHashed = crypto.createHash('md5').update(user.password).digest('hex');
+    const myPasswordHashed = crypto.createHash('sha512').update(user.password).digest('hex');
 
     user.password = myPasswordHashed;
 
@@ -149,7 +149,7 @@ User.create = (user)=>{
 }
 
 User.isPasswordMatched = (userPassword,hash )=> {
-    const myPasswordHashed = crypto.createHash('md5').update(userPassword).digest('hex');
+    const myPasswordHashed = crypto.createHash('sha512').update(userPassword).digest('hex');
     if(myPasswordHashed == hash){
         return true;
     }
