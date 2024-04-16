@@ -9,3 +9,5 @@ coverage
 keys.js
 
 sonnar-project.properties
+
+env.js

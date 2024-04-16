@@ -1,9 +1,10 @@
 const { getAll } = require("../controllers/categoriesController");
 const Category = require("../models/category");
 
-// getAll
+//GetAll
 describe("getAll", () => {
   it("should return all categories and return success message", async () => {
+    //Arrange
     const req = {};
     const res = {
       status: jest.fn().mockReturnThis(),
@@ -14,9 +15,9 @@ describe("getAll", () => {
       { id: 1, name: "Category 1" },
       { id: 2, name: "Category 2" },
     ]);
-
+    //Act 
     await getAll(req, res);
-
+    //Assert
     expect(Category.getAll).toHaveBeenCalled();
 
     expect(res.status).toHaveBeenCalledWith(201);
@@ -27,6 +28,7 @@ describe("getAll", () => {
   });
 
   it("should handle error and return error message", async () => {
+    //Arrange
     const req = {};
     const res = {
       status: jest.fn().mockReturnThis(),
@@ -37,8 +39,9 @@ describe("getAll", () => {
       .spyOn(Category, "getAll")
       .mockRejectedValue(new Error("Database error"));
 
+    //Act
     await getAll(req, res);
-
+    //Assert
     expect(Category.getAll).toHaveBeenCalled();
 
     expect(res.status).toHaveBeenCalledWith(501);
@@ -56,6 +59,7 @@ const { create } = require("../controllers/categoriesController");
 
 describe("create", () => {
   it("should create a new category and return success message", async () => {
+    //Arrange
     const req = {
       body: { name: "New Category" },
     };
@@ -65,9 +69,9 @@ describe("create", () => {
     };
 
     jest.spyOn(Category, "create").mockResolvedValue({ id: 1 });
-
+    //Act
     await create(req, res);
-
+    //Assert
     expect(Category.create).toHaveBeenCalledWith(req.body);
 
     expect(res.status).toHaveBeenCalledWith(201);
@@ -79,6 +83,7 @@ describe("create", () => {
   });
 
   it("should handle error and return error message", async () => {
+    //Arrange
     const req = {
       body: { name: "New Category" },
     };
@@ -91,8 +96,9 @@ describe("create", () => {
       .spyOn(Category, "create")
       .mockRejectedValue(new Error("Database error"));
 
+    //Act 
     await create(req, res);
-
+    //Assert
     expect(Category.create).toHaveBeenCalledWith(req.body);
 
     expect(res.status).toHaveBeenCalledWith(501);
