@@ -1,5 +1,5 @@
 
-const { getAll } = require('../controllers/usersController');
+const { getAll,logout } = require('../controllers/usersController');
 const User = require('../models/user');
 const usersController = require('../controllers/usersController');
 
@@ -7,7 +7,7 @@ const should = require("should"); // Es requerido para usar should en las prueba
 const sinon = require("sinon");
 const jwt = require('jsonwebtoken');
 const keys = require('../config/keys');
-const proxyquire = require('proxyquire');
+
 
 
 
@@ -315,7 +315,182 @@ describe('Users Controller', () => {
   });
 });
 
+describe("logout", () => {
+  afterEach(() => {
+    sinon.restore();
+  });
 
+  it("should update user token to null and return success message", async () => {
+    // Arrange
+    const req = {
+      body: {
+        id: 1,
+      },
+    };
+    const res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    sinon.stub(User, "updateToken");
+
+    // Act
+    await logout(req, res);
+
+    // Assert
+    User.updateToken.calledOnceWith(1, null).should.be.true();
+    res.status.calledWith(201).should.be.true();
+    res.json
+      .calledWith({
+        success: true,
+        message: "La sesion del usuario ha sido cerrado correctamente.",
+      })
+      .should.be.true();
+  });
+
+  it("should handle error and return error message", async () => {
+    // Arrange
+    const req = {
+      body: {
+        id: 1,
+      },
+    };
+    const res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    const error = new Error("Database error");
+    sinon.stub(User, "updateToken").rejects(error);
+
+    // Act
+    await logout(req, res);
+
+    // Assert
+    User.updateToken.calledOnceWith(1, null).should.be.true();
+    res.status.calledWith(501).should.be.true();
+    res.json
+      .calledWith({
+        success: false,
+        message: "Error al momento de cerrar sesion",
+        error: sinon.match.instanceOf(Error),
+      })
+  });
+});
+
+
+describe('Users Controller', () => {
+  describe('findById', () => {
+      afterEach(() => {
+          sinon.restore(); // Restaura todos los stubs
+      });
+
+      it('should find user by id', async () => {
+          // Arrange
+          const req = { 
+              params: { id: '1' }
+          };
+          const res = {
+              status: sinon.stub().returnsThis(),
+              json: sinon.stub(),
+          };
+          const mockData = { id: 1, name: 'User 1' };
+          sinon.stub(User, 'findByUserId').resolves(mockData);
+
+          // Act
+          await usersController.findById(req, res);
+
+          // Assert
+          sinon.assert.calledWith(res.status, 201);
+          sinon.assert.calledWith(res.json, mockData);
+      });
+
+      it('should handle errors', async () => {
+          // Arrange
+          const req = { 
+              params: { id: '1' }
+          };
+          const res = {
+              status: sinon.stub().returnsThis(),
+              json: sinon.stub(),
+          };
+          const mockError = new Error('Error');
+          sinon.stub(User, 'findByUserId').rejects(mockError);
+
+          // Act
+          await usersController.findById(req, res);
+
+          // Assert
+          sinon.assert.calledWith(res.status, 501);
+          sinon.assert.calledWith(res.json, {
+              success: false,
+              message: 'Error al obtener el usuario por ID'
+          });
+      });
+  });
+});
+
+const storage = require('../utils/cloud_storage');
+
+describe('Users Controller', () => {
+  describe('registerWithImage', () => {
+      afterEach(() => {
+          sinon.restore(); // Restaura todos los stubs
+      });
+
+      it('should register user with image', async () => {
+          // Arrange
+          const req = { 
+              body: { user: JSON.stringify({ name: 'User 1' }) },
+              files: [ { filename: 'image.jpg' } ]
+          };
+          const res = {
+              status: sinon.stub().returnsThis(),
+              json: sinon.stub(),
+          };
+          const mockData = { id: 1, name: 'User 1' };
+          sinon.stub(User, 'create').resolves(mockData);
+          sinon.stub(Rol, 'create').resolves();
+          //sinon.stub(storage, 'default').resolves('http://example.com/image.jpg');
+
+          // Act
+          await usersController.registerWithImage(req, res);
+
+          // Assert
+          sinon.assert.calledWith(res.status, 201);
+          sinon.assert.calledWith(res.json, {
+              success: true,
+              message: 'El registro se realizo correctamente, ahora inicia sesion',
+              data: mockData.id
+          });
+      });
+
+      it('should handle errors', async () => {
+          // Arrange
+          const req = { 
+              body: { user: JSON.stringify({ name: 'User 1' }) },
+              files: [ { filename: 'image.jpg' } ]
+          };
+          const res = {
+              status: sinon.stub().returnsThis(),
+              json: sinon.stub(),
+          };
+          const mockError = new Error('Error');
+          sinon.stub(User, 'create').rejects(mockError);
+
+          // Act
+          await usersController.registerWithImage(req, res);
+
+          // Assert
+          sinon.assert.calledWith(res.status, 501);
+          sinon.assert.calledWith(res.json, {
+              success: false,
+              message: 'Hubo un error con el registro del usuario',
+              error: mockError
+          });
+      });
+  });
+});
 
 
 

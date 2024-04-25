@@ -17,6 +17,7 @@
   "dependencies": {
     "@google-cloud/storage": "^7.7.0",
     "bluebird": "^3.7.2",
+    "chai": "^5.1.0",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^16.4.5",

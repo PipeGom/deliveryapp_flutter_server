@@ -217,7 +217,7 @@ module.exports = {
             return res.status(501).json({
                 success: false,
                 message: 'Error al momento de cerrar sesion',
-                error: error
+                error: e
             });
         }
     }
