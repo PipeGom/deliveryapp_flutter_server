@@ -1,111 +1,112 @@
-const { getAll } = require("../controllers/categoriesController");
 const Category = require("../models/category");
 
 //GetAll
-describe("getAll", () => {
-  it("should return all categories and return success message", async () => {
-    //Arrange
-    const req = {};
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    };
+const sinon = require('sinon');
+const categoriesController = require('../controllers/categoriesController');
 
-    jest.spyOn(Category, "getAll").mockResolvedValue([
-      { id: 1, name: "Category 1" },
-      { id: 2, name: "Category 2" },
-    ]);
-    //Act 
-    await getAll(req, res);
-    //Assert
-    expect(Category.getAll).toHaveBeenCalled();
+describe('Categories Controller', () => {
+    describe('getAll', () => {
+        it('should return all categories', async () => {
+            // Arrange
+            const req = {};
+            const res = {
+                status: sinon.stub().returnsThis(),
+                json: sinon.stub(),
+            };
+            const mockCategories = [{ id: 1, name: 'Category 1' }];
+            sinon.stub(Category, 'getAll').resolves(mockCategories);
 
-    expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.json).toHaveBeenCalledWith([
-      { id: 1, name: "Category 1" },
-      { id: 2, name: "Category 2" },
-    ]);
-  });
+            // Act
+            await categoriesController.getAll(req, res);
 
-  it("should handle error and return error message", async () => {
-    //Arrange
-    const req = {};
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    };
+            // Assert
+            sinon.assert.calledWith(res.status, 201);
+            sinon.assert.calledWith(res.json, mockCategories);
 
-    jest
-      .spyOn(Category, "getAll")
-      .mockRejectedValue(new Error("Database error"));
+            // Restore the stub
+            Category.getAll.restore();
+        });
 
-    //Act
-    await getAll(req, res);
-    //Assert
-    expect(Category.getAll).toHaveBeenCalled();
+        it('should handle error when getting all categories', async () => {
+            // Arrange
+            const req = {};
+            const res = {
+                status: sinon.stub().returnsThis(),
+                json: sinon.stub(),
+            };
+            const mockError = new Error('Database error');
+            sinon.stub(Category, 'getAll').rejects(mockError);
 
-    expect(res.status).toHaveBeenCalledWith(501);
-    expect(res.json).toHaveBeenCalledWith({
-      success: false,
-      message: "Hubo un error al tratar de obtener las categorias",
-      error: expect.any(Error),
+            // Act
+            await categoriesController.getAll(req, res);
+
+            // Assert
+            sinon.assert.calledWith(res.status, 501);
+            sinon.assert.calledWith(res.json, {
+                message: 'Hubo un error al tratar de obtener las categorias',
+                error: mockError,
+                success: false,
+            });
+
+            // Restore the stub
+            Category.getAll.restore();
+        });
     });
-  });
 });
 
-// Create
-const { create } = require("../controllers/categoriesController");
 
 
-describe("create", () => {
-  it("should create a new category and return success message", async () => {
-    //Arrange
-    const req = {
-      body: { name: "New Category" },
-    };
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    };
 
-    jest.spyOn(Category, "create").mockResolvedValue({ id: 1 });
-    //Act
-    await create(req, res);
-    //Assert
-    expect(Category.create).toHaveBeenCalledWith(req.body);
+describe('Categories Controller', () => {
+  describe('create', () => {
+      it('should create a category', async () => {
+          // Arrange
+          const req = { body: { name: 'New Category' } };
+          const res = {
+              status: sinon.stub().returnsThis(),
+              json: sinon.stub(),
+          };
+          const mockCategory = { id: 1, name: 'New Category' };
+          sinon.stub(Category, 'create').resolves(mockCategory);
 
-    expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.json).toHaveBeenCalledWith({
-      message: "La categoria se creo correctamente",
-      success: true,
-      data: 1,
-    });
-  });
+          // Act
+          await categoriesController.create(req, res);
 
-  it("should handle error and return error message", async () => {
-    //Arrange
-    const req = {
-      body: { name: "New Category" },
-    };
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    };
+          // Assert
+          sinon.assert.calledWith(res.status, 201);
+          sinon.assert.calledWith(res.json, {
+              message: 'La categoria se creo correctamente',
+              success: true,
+              data: mockCategory.id
+          });
 
-    jest
-      .spyOn(Category, "create")
-      .mockRejectedValue(new Error("Database error"));
+          // Restore the stub
+          Category.create.restore();
+      });
 
-    //Act 
-    await create(req, res);
-    //Assert
-    expect(Category.create).toHaveBeenCalledWith(req.body);
+      it('should handle error when creating a category', async () => {
+          // Arrange
+          const req = { body: { name: 'New Category' } };
+          const res = {
+              status: sinon.stub().returnsThis(),
+              json: sinon.stub(),
+          };
+          const mockError = new Error('Database error');
+          sinon.stub(Category, 'create').rejects(mockError);
 
-    expect(res.status).toHaveBeenCalledWith(501);
-    expect(res.json).toHaveBeenCalledWith({
-      message: "Hubo un error al crear la categoria",
-      success: false,
-      error: expect.any(Error),
-    });
+          // Act
+          await categoriesController.create(req, res);
+
+          // Assert
+          sinon.assert.calledWith(res.status, 501);
+          sinon.assert.calledWith(res.json, {
+              message: 'Hubo un error al crear la categoria',
+              success: false,
+              error: mockError,
+          });
+
+          // Restore the stub
+          Category.create.restore();
+      });
   });
 });

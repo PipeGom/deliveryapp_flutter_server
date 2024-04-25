@@ -58,24 +58,20 @@ module.exports = {
                 const data = await Product.create(product); // ALMACENANDO LA INFORMACION
                 product.id = data.id;
 
+                function assignImageUrl(product, url, inserts) {
+                    if (url !== undefined && url !== null) {
+                      product[`image${inserts + 1}`] = url;
+                    }
+                    return product;
+                  }
+
                 const start = async () => {
-                     await asyncForEach(files, async (file) => {
-                        const pathImage = `image_${Date.now()}`; //nombre de la imagen
+                     await asyncForEach(files, async (file, index) => {
+                        const pathImage = `image_${Date.now()}_${index}`; //nombre de la imagen
                         const url = await storage(file, pathImage);
 
-                        if (url !== undefined && url !== null) {
-                            if (inserts == 0) { // IMAGEN 1
-                                product.image1 = url;
-                            }
-                            else if(inserts == 1) { // IMAGEN 2
-                                product.image2 = url;
-                            }
-                            else if(inserts == 2) { // IMAGEN 3
-                                product.image3 = url;
-                            }
-                        }
-
-                        await Product.update(product);
+                       
+                        await Product.update(assignImageUrl(product, url, inserts));
                         inserts = inserts + 1; // Lleva el conteo de las imagenes almacenadas
 
                         if (inserts == files.length) {

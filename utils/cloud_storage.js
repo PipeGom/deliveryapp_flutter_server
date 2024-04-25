@@ -24,8 +24,8 @@ module.exports = (file, pathImage, deletePathImage) => {
         if (deletePathImage) {
 
             if (deletePathImage != null || deletePathImage != undefined) {
-                const parseDeletePathImage = url.parse(deletePathImage)
-                var ulrDelete = parseDeletePathImage.pathname.slice(23);
+                const parseDeletePathImage = new URL(deletePathImage)
+                const ulrDelete = parseDeletePathImage.pathname.slice(23);
                 const fileDelete = bucket.file(`${ulrDelete}`)
 
                 fileDelete.delete().then((imageDelete) => {
@@ -56,7 +56,7 @@ module.exports = (file, pathImage, deletePathImage) => {
 
                 blobStream.on('error', (error) => {
                     console.log('Error al subir archivo a firebase', error);
-                    reject('Something is wrong! Unable to upload at the moment.');
+                    reject(new Error('Something is wrong! Unable to upload at the moment.'));
                 });
 
                 blobStream.on('finish', () => {

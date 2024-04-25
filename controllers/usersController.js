@@ -17,7 +17,8 @@ module.exports = {
             console.log(`Error: ${error}`);
             return res.status(501).json({
                 success: false,
-                message: 'Error al obtener los usuarios'
+                message: 'Error al obtener los usuarios',
+                error: error
             }
             );
         }
@@ -176,7 +177,7 @@ module.exports = {
                     }
 
                     await User.updateToken(myUser.id, `JWT ${token}`); // id del usuario que se esta autenticando y su respectivo token, esta linea lo guarda en base de datos 
-                    console.log(`USUARIO ENVIADO  ${data} `);
+                    console.log(`USUARIO ENVIADO  ${JSON.stringify(data)})} `);
                     
                     return res.status(201).json({
                         success: true,
@@ -187,7 +188,7 @@ module.exports = {
             else{
                 return res.status(401).json({
                     success: false,
-                    message: ' La contraseña es incorrecta',
+                    message: 'La contraseña es incorrecta',
                   
                 });
             }

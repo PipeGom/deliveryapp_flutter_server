@@ -150,10 +150,7 @@ User.create = (user)=>{
 
 User.isPasswordMatched = (userPassword,hash )=> {
     const myPasswordHashed = crypto.createHash('sha512').update(userPassword).digest('hex');
-    if(myPasswordHashed == hash){
-        return true;
-    }
-    return false;
+    return myPasswordHashed === hash; // si son iguales retorna true de lo contrario false
 }
 
 User.update = (user)=>{
