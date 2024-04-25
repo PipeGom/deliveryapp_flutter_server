@@ -6,5 +6,5 @@ module.exports={
     DB_NAME: 'delivery_db',
     DB_USER: 'postgres',
     DB_PASSWORD: '1234',
-    IP_ADDRESS:'192.168.10.16'
+    IP_ADDRESS:'192.168.161.114'
 }

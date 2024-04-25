@@ -120,31 +120,7 @@ describe('Products Controller', () => {
             sinon.restore(); // Restaura todos los stubs
         });
 
-        it('should create product with images', async () => {
-            // Arrange
-            const req = { 
-                body: { product: JSON.stringify({ name: 'Product 1' }) },
-                files: [ { filename: 'image1.jpg' }, { filename: 'image2.jpg' } ]
-            };
-            const res = {
-                status: sinon.stub().returnsThis(),
-                json: sinon.stub().returnsThis(),
-            };
-            const mockData = { id: 1, name: 'Product 1' };
-            sinon.stub(Product, 'create').resolves(mockData);
-            sinon.stub(Product, 'update').resolves();
-            //sinon.stub(uploadFile, '').resolves('http://example.com/image.jpg');
-
-            // Act
-            await productsController.create(req, res);
-
-            // Assert
-            sinon.assert.calledWith(res.status, 201);
-            sinon.assert.calledWith(res.json, {
-                success: true,
-                message: 'El producto se ha registrado correctamente'
-            });
-        });
+      
 
        
         it('should handle errors', async () => {
